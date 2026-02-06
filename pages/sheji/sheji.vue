@@ -1113,9 +1113,9 @@
 
 	/* 生成结果占位符 */
 	.result-placeholder {
-		border: 2rpx dashed #5B9BD5;
 		border-radius: 12rpx;
-		background-color: #fff;
+		background: linear-gradient(135deg, #F0F4FF, #E6EEFF);
+		/* 浅蓝紫色渐变背景 */
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -1129,10 +1129,9 @@
 	}
 
 	.placeholder-image {
-		width: 90%;
-		height: 90%;
-		background: linear-gradient(135deg, #F0F4FF, #E6EEFF);
-		/* 浅蓝紫色渐变 */
+		width: 100%;
+		height: 100%;
+		/* 扩大到100%填满容器 */
 		border-radius: 12rpx;
 		display: flex;
 		flex-direction: column;
@@ -1218,11 +1217,13 @@
 		border-radius: 12rpx;
 		border: 2rpx dashed #5B9BD5;
 		background-color: #fff;
-		/* 使用固定高度确保图片正确显示 */
-		height: 600rpx;
+		/* 使用1:1正方形，和占位符一样 */
+		height: 0;
+		padding-bottom: 100%;
 		box-sizing: border-box;
 		display: block;
 		overflow: hidden;
+		position: relative;
 	}
 
 	.result-image image {
@@ -1230,6 +1231,9 @@
 		height: 100%;
 		border-radius: 12rpx;
 		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
 	}
 
 	.result-actions {
