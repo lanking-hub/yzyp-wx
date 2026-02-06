@@ -1,0 +1,56 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/sheji/sheji",
+			"style": {
+			}
+		},
+		{
+			"path": "pages/shoucang/shoucang",
+			"style": {
+			}
+		},
+		{
+			"path": "pages/history/history",
+			"style": {
+			}
+		},
+		{
+			"path": "pages/wode/wode",
+			"style": {
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationStyle": "custom",
+		"backgroundColor": "#1E3A8A"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#666666",
+		"selectedColor": "#1E3A8A",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"height": "60px",
+		"list": [
+			{
+				"pagePath": "pages/sheji/sheji",
+				"text": "设计",
+				"iconPath": "/static/icons/tabBar/笔 (1).png",
+				"selectedIconPath": "/static/icons/tabBar/笔.png"
+			},
+			{
+				"pagePath": "pages/shoucang/shoucang",
+				"text": "收藏",
+				"iconPath": "/static/icons/tabBar/爱心 (1).png",
+				"selectedIconPath": "/static/icons/tabBar/爱心.png"
+			},
+			{
+				"pagePath": "pages/wode/wode",
+				"text": "我的",
+				"iconPath": "/static/icons/tabBar/我 (1).png",
+				"selectedIconPath": "/static/icons/tabBar/我.png"
+			}
+		]
+	}
+}

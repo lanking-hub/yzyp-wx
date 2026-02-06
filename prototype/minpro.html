@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fashion AI | 服装设计助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8E53;
+            --secondary: #4ECDC4;
+            --secondary-light: #7FE5DE;
+            --accent: #FFD166;
+            --bg-light: #FFF9F0;
+            --bg-card: #FFFFFF;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --text-light: #888888;
+            --border-light: #FFE0D6;
+            --shadow: rgba(255, 107, 53, 0.15);
+            --success: #4CAF50;
+            --warning: #FF9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+        
+        .app-container {
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .status-bar .time {
+            font-weight: 600;
+        }
+        
+        .header {
+            padding: 16px;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .app-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .page {
+            display: none;
+            padding: 16px;
+            min-height: calc(100vh - 160px);
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+        }
+        
+        .section-title i {
+            margin-right: 8px;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header i {
+            margin-right: 8px;
+        }
+        
+        .card-body {
+            padding: 16px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .text-input {
+            width: 100%;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-dark);
+            font-size: 16px;
+            resize: none;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .brand-selector {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 8px 0;
+            margin: 0 -4px;
+            scrollbar-width: none;
+        }
+        
+        .brand-selector::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .brand-option {
+            flex: 0 0 auto;
+            width: 80px;
+            padding: 12px 8px;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .brand-option.selected {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+        
+        .brand-logo {
+            font-size: 18px;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+        
+        .brand-name {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        
+        .btn-outline {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+        
+        .btn-outline:active {
+            background: rgba(255, 107, 53, 0.1);
+        }
+        
+        .image-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 1px dashed var(--border-light);
+            margin-bottom: 16px;
+        }
+        
+        .placeholder-image {
+            width: 180px;
+            height: 240px;
+            background: linear-gradient(135deg, #FFF9F0, #FFE0D6);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .placeholder-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 107, 53, 0.05) 50%, transparent 60%);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .btn-action i {
+            margin-right: 6px;
+        }
+        
+        .btn-action:active {
+            background: rgba(255, 107, 53, 0.1);
+        }
+        
+        .fabric-recommendation {
+            background: rgba(255, 107, 53, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .fabric-item {
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 2px solid var(--primary);
+        }
+        
+        .fabric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .fabric-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .fabric-scores {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .score-badge {
+            background: var(--primary);
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .fabric-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-medium);
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+        
+        .fabric-justification {
+            background: rgba(255, 107, 53, 0.05);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-style: italic;
+            color: var(--text-medium);
+            font-size: 14px;
+        }
+        
+        .fabric-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .btn-success:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .btn-warning:active {
+            transform: scale(0.95);
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 30px 16px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 107, 53, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .progress {
+            height: 6px;
+            background: #FFE0D6;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .collection-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .collection-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .collection-item:active {
+            transform: scale(0.98);
+            background: rgba(255, 107, 53, 0.05);
+        }
+        
+        .collection-image {
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFF9F0, #FFE0D6);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+        
+        .collection-info {
+            flex: 1;
+        }
+        
+        .collection-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+        
+        .collection-desc {
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            border-top: 1px solid var(--border-light);
+            padding: 8px 0;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 0;
+            color: var(--text-light);
+            font-size: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        .tab-item.active {
+            color: var(--primary);
+        }
+        
+        .tab-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            z-index: 1000;
+            width: 90%;
+            max-width: 300px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-dark);
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            transition: transform 0.4s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .setting-label {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .setting-value {
+            color: var(--text-medium);
+            font-size: 14px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-medium);
+            cursor: pointer;
+        }
+        
+        .detail-modal-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #FFF9F0, #FFE0D6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            color: var(--primary);
+            font-size: 40px;
+        }
+        
+        .detail-info {
+            margin-bottom: 16px;
+        }
+        
+        .detail-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .detail-desc {
+            color: var(--text-medium);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="time">21:30</div>
+            <div class="icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi" style="margin: 0 8px;"></i>
+                <i class="fas fa-battery-three-quarters"></i>
+            </div>
+        </div>
+        
+        <!-- 头部 -->
+        <div class="header">
+            <div class="app-title">Fashion AI</div>
+            <div class="app-subtitle">智能服装设计助手</div>
+        </div>
+        
+        <!-- 页面内容 -->
+        
+        <!-- 设计页面 -->
+        <div class="page active" id="design-page">
+            <div class="section-title">
+                <i class="fas fa-pencil-alt"></i>
+                服装设计
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tshirt"></i>
+                    设计描述
+                </div>
+                <div class="card-body">
+                    <label class="input-label">描述您想要的服装</label>
+                    <textarea class="text-input" id="designPromptInput" rows="3" placeholder="例如：一条收腰纯色连衣裙，适合春季穿着..."></textarea>
+                    
+                    <label class="input-label" style="margin-top: 16px;">选择品牌风格</label>
+                    <div class="brand-selector">
+                        <div class="brand-option" data-brand="拉夫劳伦">
+                            <div class="brand-logo"><i class="fas fa-crown"></i></div>
+                            <div class="brand-name">拉夫劳伦</div>
+                        </div>
+                        <div class="brand-option" data-brand="House of CB">
+                            <div class="brand-logo"><i class="fas fa-female"></i></div>
+                            <div class="brand-name">House of CB</div>
+                        </div>
+                        <div class="brand-option" data-brand="Lululemon与Alo">
+                            <div class="brand-logo"><i class="fas fa-running"></i></div>
+                            <div class="brand-name">Lululemon与Alo</div>
+                        </div>
+                        <div class="brand-option" data-brand="ZARA">
+                            <div class="brand-logo"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="brand-name">ZARA</div>
+                        </div>
+                        <div class="brand-option" data-brand="COS">
+                            <div class="brand-logo"><i class="fas fa-gem"></i></div>
+                            <div class="brand-name">COS</div>
+                        </div>
+                    </div>
+                    
+                    <button id="generateDesignBtn" class="btn-primary">
+                        <i class="fas fa-magic"></i> 生成服装设计
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-image"></i>
+                    生成结果
+                </div>
+                <div class="card-body">
+                    <div class="loading-spinner" id="designLoadingSpinner">
+                        <div class="spinner"></div>
+                        <p>AI正在生成您的设计...</p>
+                        <div class="progress">
+                            <div class="progress-bar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section" id="designResultSection">
+                        <div class="image-container">
+                            <div class="placeholder-image" id="generatedImage">
+                                <div>
+                                    <i class="fas fa-tshirt" style="font-size: 36px; margin-bottom: 8px;"></i>
+                                    <p>生成的服装设计将显示在这里</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button id="saveJpgBtn" class="btn-action">
+                                <i class="fas fa-download"></i> JPG
+                            </button>
+                            <button id="savePngBtn" class="btn-action">
+                                <i class="fas fa-download"></i> PNG
+                            </button>
+                            <button id="savePdfBtn" class="btn-action">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                        
+                        <button id="addToCollectionBtn" class="btn-outline">
+                            <i class="fas fa-heart"></i> 添加到收藏
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 面料页面 -->
+        <div class="page" id="fabric-page">
+            <div class="section-title">
+                <i class="fas fa-th-list"></i>
+                面料推荐
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-cut"></i>
+                    面料需求
+                </div>
+                <div class="card-body">
+                    <label class="input-label">描述您需要的面料特性</label>
+                    <textarea class="text-input" id="fabricPromptInput" rows="3" placeholder="例如：针织面料，透气舒适，适合贴身穿着..."></textarea>
+                    
+                    <button id="fabricRecommendBtn" class="btn-primary">
+                        <i class="fas fa-search"></i> 智能面料推荐
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-th-list"></i>
+                    推荐结果
+                </div>
+                <div class="card-body">
+                    <div class="loading-spinner" id="fabricLoadingSpinner">
+                        <div class="spinner"></div>
+                        <p>正在分析您的需求并搜索合适的面料...</p>
+                    </div>
+                    
+                    <div id="fabricRecommendation" class="fabric-recommendation">
+                        <p class="text-center" style="color: var(--text-light);">请点击"智能面料推荐"按钮获取面料推荐</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 收藏页面 -->
+        <div class="page" id="collection-page">
+            <div class="section-title">
+                <i class="fas fa-heart"></i>
+                我的收藏
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-image"></i>
+                    设计图收藏
+                </div>
+                <div class="card-body">
+                    <div id="designCollectionList" class="collection-list">
+                        <!-- 设计收藏将通过JS动态添加 -->
+                        <div class="collection-item" data-id="design_1">
+                            <div class="collection-image">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <div class="collection-info">
+                                <div class="collection-title">春季连衣裙设计</div>
+                                <div class="collection-desc">品牌: 拉夫劳伦 | 时间: 2023-10-15</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-th-list"></i>
+                    面料收藏
+                </div>
+                <div class="card-body">
+                    <div id="fabricCollectionList" class="collection-list">
+                        <!-- 面料收藏将通过JS动态添加 -->
+                        <div class="collection-item" data-id="fabric_1">
+                            <div class="collection-image" style="background: linear-gradient(135deg, #E8F4FD, #D4EDDA);">
+                                <i class="fas fa-cut"></i>
+                            </div>
+                            <div class="collection-info">
+                                <div class="collection-title">柔感针织面料</div>
+                                <div class="collection-desc">可持续评分: 85/100</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 我的页面 -->
+        <div class="page" id="profile-page">
+            <div class="section-title">
+                <i class="fas fa-user"></i>
+                个人中心
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i>
+                    个人信息
+                </div>
+                <div class="card-body">
+                    <div class="setting-item">
+                        <div class="setting-label">用户名</div>
+                        <div class="setting-value">FashionUser</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">会员状态</div>
+                        <div class="setting-value">普通会员</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">注册时间</div>
+                        <div class="setting-value">2023-08-10</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-cog"></i>
+                    设置
+                </div>
+                <div class="card-body">
+                    <div class="setting-item">
+                        <div class="setting-label">消息通知</div>
+                        <div class="setting-value">开启</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">自动保存设计</div>
+                        <div class="setting-value">开启</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">图片质量</div>
+                        <div class="setting-value">高清</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">语言</div>
+                        <div class="setting-value">简体中文</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i>
+                    关于
+                </div>
+                <div class="card-body">
+                    <div class="setting-item">
+                        <div class="setting-label">版本</div>
+                        <div class="setting-value">v2.1.0</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">检查更新</div>
+                        <div class="setting-value">已是最新版本</div>
+                    </div>
+                    <button class="btn-outline" style="margin-top: 16px;">
+                        <i class="fas fa-question-circle"></i> 帮助与反馈
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="tab-bar">
+            <div class="tab-item active" data-page="design-page">
+                <i class="fas fa-pencil-alt"></i>
+                <span>设计</span>
+            </div>
+            <div class="tab-item" data-page="fabric-page">
+                <i class="fas fa-th-list"></i>
+                <span>面料</span>
+            </div>
+            <div class="tab-item" data-page="collection-page">
+                <i class="fas fa-heart"></i>
+                <span>收藏</span>
+            </div>
+            <div class="tab-item" data-page="profile-page">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 设计详情模态框 -->
+    <div class="modal" id="designDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>设计详情</span>
+                <button class="modal-close" id="closeDesignModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-modal-image">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="detail-info">
+                    <div class="detail-title">设计描述</div>
+                    <div class="detail-desc" id="designDetailPrompt">一条收腰纯色连衣裙，适合春季穿着，长度到膝盖</div>
+                </div>
+                <div class="detail-info">
+                    <div class="detail-title">品牌风格</div>
+                    <div class="detail-desc" id="designDetailBrand">拉夫劳伦</div>
+                </div>
+                <div class="detail-info">
+                    <div class="detail-title">生成时间</div>
+                    <div class="detail-desc" id="designDetailTime">2023-10-15 14:30</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-action">
+                        <i class="fas fa-edit"></i> 重新生成
+                    </button>
+                    <button class="btn-action">
+                        <i class="fas fa-share-alt"></i> 分享
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 面料详情模态框 -->
+    <div class="modal" id="fabricDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>面料详情</span>
+                <button class="modal-close" id="closeFabricModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="fabric-item">
+                    <div class="fabric-header">
+                        <div class="fabric-name" id="fabricDetailName">柔感针织面料</div>
+                        <div class="fabric-scores">
+                            <div class="score-badge" id="fabricDetailScore">85/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="fabric-justification" id="fabricDetailJustification">
+                        这款面料柔软亲肤，弹性优异，非常适合贴身穿着，同时具有良好的可持续性评分。
+                    </div>
+                    
+                    <div class="fabric-details">
+                        <div class="detail-item">
+                            <span class="detail-label">成分:</span>
+                            <span class="detail-value" id="fabricDetailComposition">棉95%，氨纶5%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">认证:</span>
+                            <span class="detail-value" id="fabricDetailCertifications">GOTS, OEKO-TEX</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">用途:</span>
+                            <span class="detail-value" id="fabricDetailApplication">连衣裙、上衣</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">用水量:</span>
+                            <span class="detail-value" id="fabricDetailWater">120 L/kg</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">价格:</span>
+                            <span class="detail-value" id="fabricDetailPrice">¥45/米</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fabric-actions">
+                    <button class="btn-success">
+                        <i class="fas fa-check"></i> 选择这款
+                    </button>
+                    <button class="btn-warning">
+                        <i class="fas fa-heart"></i> 特别喜欢
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面切换功能
+            const tabItems = document.querySelectorAll('.tab-item');
+            const pages = document.querySelectorAll('.page');
+            
+            tabItems.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const pageName = this.getAttribute('data-page');
+                    
+                    // 更新活跃标签
+                    tabItems.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应页面
+                    pages.forEach(page => page.classList.remove('active'));
+                    document.getElementById(pageName).classList.add('active');
+                });
+            });
+            
+            // 品牌选择功能
+            const brandOptions = document.querySelectorAll('.brand-option');
+            let selectedBrand = '';
+            
+            brandOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    brandOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedBrand = this.getAttribute('data-brand');
+                });
+            });
+            
+            // 生成按钮点击事件
+            const generateDesignBtn = document.getElementById('generateDesignBtn');
+            const designLoadingSpinner = document.getElementById('designLoadingSpinner');
+            const designResultSection = document.getElementById('designResultSection');
+            const designPromptInput = document.getElementById('designPromptInput');
+            const designProgressBar = document.querySelector('#designLoadingSpinner .progress-bar');
+            
+            generateDesignBtn.addEventListener('click', function() {
+                const designPrompt = designPromptInput.value.trim();
+                
+                if (!designPrompt) {
+                    showNotification('请输入服装设计描述！', 'warning');
+                    return;
+                }
+                
+                if (!selectedBrand) {
+                    showNotification('请选择品牌风格！', 'warning');
+                    return;
+                }
+                
+                // 显示加载动画
+                designLoadingSpinner.style.display = 'block';
+                designResultSection.style.display = 'none';
+                
+                // 模拟进度条
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress > 90) {
+                        progress = 90;
+                    }
+                    designProgressBar.style.width = progress + '%';
+                }, 300);
+                
+                // 模拟生成过程
+                setTimeout(function() {
+                    clearInterval(progressInterval);
+                    designProgressBar.style.width = '100%';
+                    
+                    setTimeout(function() {
+                        designLoadingSpinner.style.display = 'none';
+                        designResultSection.style.display = 'block';
+                        
+                        // 重置进度条
+                        setTimeout(() => {
+                            designProgressBar.style.width = '0%';
+                        }, 500);
+                    }, 500);
+                }, 3000);
+            });
+            
+            // 面料推荐按钮点击事件
+            const fabricRecommendBtn = document.getElementById('fabricRecommendBtn');
+            const fabricLoadingSpinner = document.getElementById('fabricLoadingSpinner');
+            const fabricRecommendation = document.getElementById('fabricRecommendation');
+            const fabricPromptInput = document.getElementById('fabricPromptInput');
+            
+            fabricRecommendBtn.addEventListener('click', function() {
+                const fabricPrompt = fabricPromptInput.value.trim();
+                
+                if (!fabricPrompt) {
+                    showNotification('请输入面料需求描述！', 'warning');
+                    return;
+                }
+                
+                // 显示加载
+                fabricLoadingSpinner.style.display = 'block';
+                fabricRecommendation.innerHTML = '';
+                
+                // 调用面料推荐API
+                fetchFabricRecommendation(fabricPrompt);
+            });
+            
+            // 调用面料推荐API
+            function fetchFabricRecommendation(prompt) {
+                // 这里需要替换为您的智能agent的实际API地址
+                const apiUrl = 'http://localhost:5000/recommend-fabric';
+                
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        prompt: prompt,
+                        user_id: 'default_user'
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    fabricLoadingSpinner.style.display = 'none';
+                    // 显示面料推荐结果
+                    displayFabricRecommendation(data.recommendations || data);
+                })
+                .catch(error => {
+                    console.error('调用面料推荐API出错:', error);
+                    fabricLoadingSpinner.style.display = 'none';
+                    // 如果API调用失败，使用模拟数据
+                    simulateFabricRecommendation(prompt);
+                });
+            }
+            
+            // 显示面料推荐结果
+            function displayFabricRecommendation(recommendations) {
+                if (!recommendations || recommendations.length === 0) {
+                    fabricRecommendation.innerHTML = '<p class="text-center" style="color: var(--text-light);">没有找到匹配的面料推荐</p>';
+                    return;
+                }
+                
+                let html = '';
+                recommendations.forEach(fabric => {
+                    html += `
+                        <div class="fabric-item">
+                            <div class="fabric-header">
+                                <div class="fabric-name">${fabric.name || fabric.fabric_id}</div>
+                                <div class="fabric-scores">
+                                    <div class="score-badge">可持续性: ${fabric.sustainability_score || 0}/100</div>
+                                    ${fabric.weighted_score ? `<div class="score-badge" style="background: var(--secondary);">加权: ${fabric.weighted_score.toFixed(1)}</div>` : ''}
+                                </div>
+                            </div>
+                            
+                            ${fabric.justification ? `<div class="fabric-justification">${fabric.justification}</div>` : ''}
+                            
+                            <div class="fabric-details">
+                                ${fabric.composition ? `<div class="detail-item"><span class="detail-label">成分:</span> <span class="detail-value">${fabric.composition}</span></div>` : ''}
+                                ${fabric.certifications ? `<div class="detail-item"><span class="detail-label">认证:</span> <span class="detail-value">${fabric.certifications}</span></div>` : ''}
+                                ${fabric.application ? `<div class="detail-item"><span class="detail-label">用途:</span> <span class="detail-value">${fabric.application}</span></div>` : ''}
+                                ${fabric.water_usage ? `<div class="detail-item"><span class="detail-label">用水量:</span> <span class="detail-value">${fabric.water_usage} L/kg</span></div>` : ''}
+                                ${fabric.price_per_meter ? `<div class="detail-item"><span class="detail-label">价格:</span> <span class="detail-value">¥${fabric.price_per_meter}/米</span></div>` : ''}
+                            </div>
+                            
+                            <div class="fabric-actions">
+                                <button class="btn-success select-fabric" data-fabric-id="${fabric.fabric_id}">
+                                    <i class="fas fa-check"></i> 选择这款
+                                </button>
+                                <button class="btn-warning love-fabric" data-fabric-id="${fabric.fabric_id}">
+                                    <i class="fas fa-heart"></i> 特别喜欢
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                fabricRecommendation.innerHTML = html;
+                
+                // 添加面料选择事件
+                document.querySelectorAll('.select-fabric').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const fabricId = this.getAttribute('data-fabric-id');
+                        recordFabricSelection(fabricId, 'select');
+                    });
+                });
+                
+                // 添加特别喜欢事件
+                document.querySelectorAll('.love-fabric').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const fabricId = this.getAttribute('data-fabric-id');
+                        recordFabricSelection(fabricId, 'love');
+                    });
+                });
+            }
+            
+            // 记录面料选择
+            function recordFabricSelection(fabricId, action) {
+                const prompt = fabricPromptInput.value.trim();
+                
+                // 显示加载状态
+                showNotification('正在记录您的选择...', 'success');
+                
+                // 模拟API调用延迟
+                setTimeout(() => {
+                    // 在实际应用中，这里应该是真实的API调用
+                    console.log(`记录选择: fabricId=${fabricId}, action=${action}, query=${prompt}`);
+                    
+                    // 模拟成功响应
+                    showNotification(`已记录您的${action === 'select' ? '选择' : '强烈偏好'}！`, 'success');
+                    
+                    // 添加到面料收藏
+                    addToFabricCollection(fabricId);
+                    
+                    // 更新UI反映选择状态
+                    updateFabricSelectionUI(fabricId, action);
+                }, 1000);
+            }
+            
+            function updateFabricSelectionUI(fabricId, action) {
+                // 找到对应的面料项并更新UI
+                const fabricItems = document.querySelectorAll('.fabric-item');
+                fabricItems.forEach(item => {
+                    const selectBtn = item.querySelector('.select-fabric');
+                    const loveBtn = item.querySelector('.love-fabric');
+                    
+                    if (selectBtn && selectBtn.getAttribute('data-fabric-id') === fabricId) {
+                        if (action === 'select') {
+                            selectBtn.innerHTML = '<i class="fas fa-check-circle"></i> 已选择';
+                            selectBtn.classList.remove('btn-success');
+                            selectBtn.classList.add('btn-secondary');
+                            selectBtn.disabled = true;
+                        } else if (action === 'love') {
+                            loveBtn.innerHTML = '<i class="fas fa-heart"></i> 已特别喜欢';
+                            loveBtn.classList.remove('btn-warning');
+                            loveBtn.classList.add('btn-secondary');
+                            loveBtn.disabled = true;
+                        }
+                    }
+                });
+            }
+            
+            // 模拟面料推荐功能（备用，当API不可用时使用）
+            function simulateFabricRecommendation(prompt) {
+                const fabricTypes = [
+                    {
+                        fabric_id: "fabric_001",
+                        name: "柔感针织面料",
+                        composition: "棉95%，氨纶5%",
+                        sustainability_score: 85,
+                        weighted_score: 87.5,
+                        water_usage: 120,
+                        price_per_meter: 45,
+                        application: "连衣裙、上衣",
+                        certifications: "GOTS, OEKO-TEX",
+                        justification: "这款面料柔软亲肤，弹性优异，非常适合贴身穿着，同时具有良好的可持续性评分。"
+                    },
+                    {
+                        fabric_id: "fabric_002",
+                        name: "丝光棉面料",
+                        composition: "棉100%",
+                        sustainability_score: 78,
+                        weighted_score: 80.5,
+                        water_usage: 150,
+                        price_per_meter: 60,
+                        application: "衬衫、连衣裙",
+                        certifications: "GOTS",
+                        justification: "光泽感强，手感顺滑，适合春夏连衣裙，具有良好的垂坠感。"
+                    }
+                ];
+                
+                displayFabricRecommendation(fabricTypes);
+            }
+            
+            // 添加到设计收藏
+            const addToCollectionBtn = document.getElementById('addToCollectionBtn');
+            const designCollectionList = document.getElementById('designCollectionList');
+            
+            addToCollectionBtn.addEventListener('click', function() {
+                const designPrompt = designPromptInput.value.trim();
+                
+                if (!designPrompt) {
+                    showNotification('请先生成设计！', 'warning');
+                    return;
+                }
+                
+                // 添加到设计收藏
+                addToDesignCollection(designPrompt, selectedBrand);
+                showNotification('设计已添加到收藏！', 'success');
+            });
+            
+            function addToDesignCollection(prompt, brand) {
+                const collectionItem = document.createElement('div');
+                collectionItem.className = 'collection-item';
+                collectionItem.setAttribute('data-id', 'design_' + Date.now());
+                
+                collectionItem.innerHTML = `
+                    <div class="collection-image">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="collection-info">
+                        <div class="collection-title">${prompt.substring(0, 20)}${prompt.length > 20 ? '...' : ''}</div>
+                        <div class="collection-desc">品牌: ${brand} | 时间: ${new Date().toLocaleDateString()}</div>
+                    </div>
+                `;
+                
+                // 点击查看详情
+                collectionItem.addEventListener('click', function() {
+                    showDesignDetail(prompt, brand);
+                });
+                
+                designCollectionList.appendChild(collectionItem);
+            }
+            
+            function addToFabricCollection(fabricId) {
+                const fabricItems = document.querySelectorAll('.fabric-item');
+                let fabricData = null;
+                
+                // 查找对应的面料数据
+                fabricItems.forEach(item => {
+                    const selectBtn = item.querySelector('.select-fabric');
+                    if (selectBtn && selectBtn.getAttribute('data-fabric-id') === fabricId) {
+                        const name = item.querySelector('.fabric-name').textContent;
+                        const score = item.querySelector('.score-badge').textContent;
+                        fabricData = { name, score };
+                    }
+                });
+                
+                if (!fabricData) return;
+                
+                const fabricCollectionList = document.getElementById('fabricCollectionList');
+                const collectionItem = document.createElement('div');
+                collectionItem.className = 'collection-item';
+                collectionItem.setAttribute('data-id', fabricId);
+                
+                collectionItem.innerHTML = `
+                    <div class="collection-image" style="background: linear-gradient(135deg, #E8F4FD, #D4EDDA);">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <div class="collection-info">
+                        <div class="collection-title">${fabricData.name}</div>
+                        <div class="collection-desc">可持续评分: ${fabricData.score}</div>
+                    </div>
+                `;
+                
+                // 点击查看详情
+                collectionItem.addEventListener('click', function() {
+                    showFabricDetail(fabricId);
+                });
+                
+                fabricCollectionList.appendChild(collectionItem);
+            }
+            
+            // 显示设计详情
+            function showDesignDetail(prompt, brand) {
+                const modal = document.getElementById('designDetailModal');
+                const promptElement = document.getElementById('designDetailPrompt');
+                const brandElement = document.getElementById('designDetailBrand');
+                const timeElement = document.getElementById('designDetailTime');
+                
+                promptElement.textContent = prompt;
+                brandElement.textContent = brand;
+                timeElement.textContent = new Date().toLocaleString();
+                
+                modal.classList.add('show');
+            }
+            
+            // 显示面料详情
+            function showFabricDetail(fabricId) {
+                const modal = document.getElementById('fabricDetailModal');
+                const fabricItems = document.querySelectorAll('.fabric-item');
+                
+                // 查找对应的面料数据
+                fabricItems.forEach(item => {
+                    const selectBtn = item.querySelector('.select-fabric');
+                    if (selectBtn && selectBtn.getAttribute('data-fabric-id') === fabricId) {
+                        const name = item.querySelector('.fabric-name').textContent;
+                        const score = item.querySelector('.score-badge').textContent;
+                        const justification = item.querySelector('.fabric-justification')?.textContent || '';
+                        const composition = Array.from(item.querySelectorAll('.detail-item')).find(el => 
+                            el.querySelector('.detail-label').textContent.includes('成分')
+                        )?.querySelector('.detail-value').textContent || '';
+                        const certifications = Array.from(item.querySelectorAll('.detail-item')).find(el => 
+                            el.querySelector('.detail-label').textContent.includes('认证')
+                        )?.querySelector('.detail-value').textContent || '';
+                        const application = Array.from(item.querySelectorAll('.detail-item')).find(el => 
+                            el.querySelector('.detail-label').textContent.includes('用途')
+                        )?.querySelector('.detail-value').textContent || '';
+                        const water = Array.from(item.querySelectorAll('.detail-item')).find(el => 
+                            el.querySelector('.detail-label').textContent.includes('用水量')
+                        )?.querySelector('.detail-value').textContent || '';
+                        const price = Array.from(item.querySelectorAll('.detail-item')).find(el => 
+                            el.querySelector('.detail-label').textContent.includes('价格')
+                        )?.querySelector('.detail-value').textContent || '';
+                        
+                        document.getElementById('fabricDetailName').textContent = name;
+                        document.getElementById('fabricDetailScore').textContent = score;
+                        document.getElementById('fabricDetailJustification').textContent = justification;
+                        document.getElementById('fabricDetailComposition').textContent = composition;
+                        document.getElementById('fabricDetailCertifications').textContent = certifications;
+                        document.getElementById('fabricDetailApplication').textContent = application;
+                        document.getElementById('fabricDetailWater').textContent = water;
+                        document.getElementById('fabricDetailPrice').textContent = price;
+                    }
+                });
+                
+                modal.classList.add('show');
+            }
+            
+            // 关闭模态框
+            document.getElementById('closeDesignModal').addEventListener('click', function() {
+                document.getElementById('designDetailModal').classList.remove('show');
+            });
+            
+            document.getElementById('closeFabricModal').addEventListener('click', function() {
+                document.getElementById('fabricDetailModal').classList.remove('show');
+            });
+            
+            // 保存功能
+            const saveJpgBtn = document.getElementById('saveJpgBtn');
+            const savePngBtn = document.getElementById('savePngBtn');
+            const savePdfBtn = document.getElementById('savePdfBtn');
+            
+            saveJpgBtn.addEventListener('click', function() {
+                saveImage('jpg');
+            });
+            
+            savePngBtn.addEventListener('click', function() {
+                saveImage('png');
+            });
+            
+            savePdfBtn.addEventListener('click', function() {
+                saveImage('pdf');
+            });
+            
+            function saveImage(format) {
+                const imageElement = document.getElementById('generatedImage');
+                
+                html2canvas(imageElement).then(canvas => {
+                    if (format === 'pdf') {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF();
+                        const imgData = canvas.toDataURL('image/png');
+                        doc.addImage(imgData, 'PNG', 10, 10, 180, 240);
+                        doc.save('服装设计.pdf');
+                    } else {
+                        const link = document.createElement('a');
+                        link.download = `服装设计.${format}`;
+                        link.href = canvas.toDataURL(`image/${format}`);
+                        link.click();
+                    }
+                    showNotification(`成功保存为${format.toUpperCase()}格式`, 'success');
+                });
+            }
+            
+            // 显示通知
+            function showNotification(message, type) {
+                // 创建通知元素
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                // 添加到页面
+                document.body.appendChild(notification);
+                
+                // 显示通知
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                // 3秒后移除
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 400);
+                }, 3000);
+            }
+            
+            // 初始化：默认选择第一个品牌
+            if (brandOptions.length > 0) {
+                brandOptions[0].click();
+            }
+            
+            // 更新时间
+            function updateTime() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                document.querySelector('.time').textContent = `${hours}:${minutes}`;
+            }
+            
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
+    </script>
+</body>
+</html>
