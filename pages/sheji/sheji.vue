@@ -127,7 +127,7 @@
 						</view>
 					</view>
 
-					<!-- 生成签占位符 -->
+					<!-- 生成前占位符 -->
 					<view v-else class="result-placeholder">
 						<view class="placeholder-image">
 							<view class="clothing-icon">
@@ -772,6 +772,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10rpx;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	/* ============= 品牌按钮颜色方案选择 ============= */
@@ -893,10 +895,10 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 8rpx;
-		min-width: calc(20% - 16rpx);
-		/* 5个按钮平均分布，每个占20% */
-		max-width: calc(20% - 16rpx);
-		/* 限制最大宽度 */
+		flex: 1;
+		/* 5个按钮平均分布 */
+		min-width: 0;
+		/* 允许按钮缩小 */
 		box-sizing: border-box;
 		transition: all 0.2s ease;
 		position: relative;
@@ -905,73 +907,68 @@
 		backface-visibility: hidden;
 	}
 
-	/* 粉红色 - Ralph Lauren (降低饱和度) */
+	/* 深蓝色 - Ralph Lauren */
 	.brand-item-pink {
-		background: #E6A8D7;
-		/* 原色 #FF69B4 → 降低饱和度和亮度 */
+		background: #003366;
 	}
 
 	.brand-item-pink.active {
-		background: #D485B9;
+		background: #002244;
 		/* 激活状态进一步加深 */
 		border: 4rpx solid #fff;
-		box-shadow: 0 6rpx 20rpx rgba(212, 133, 185, 0.5);
+		box-shadow: 0 6rpx 20rpx rgba(0, 34, 68, 0.5);
 		transform: scale(1.02);
 	}
 
-	/* 湖蓝色 - CHANEL (降低饱和度) */
+	/* 米金色 - CHANEL */
 	.brand-item-cyan {
-		background: #5FBEBE;
-		/* 原色 #00CED1 → 降低饱和度 */
+		background: #C8A986;
 	}
 
 	.brand-item-cyan.active {
-		background: #4A9E9E;
+		background: #A88B6A;
 		/* 激活状态进一步加深 */
 		border: 4rpx solid #fff;
-		box-shadow: 0 6rpx 20rpx rgba(74, 158, 158, 0.5);
+		box-shadow: 0 6rpx 20rpx rgba(168, 139, 106, 0.5);
 		transform: scale(1.02);
 	}
 
-	/* 翠绿色 - Lululemon (降低饱和度) */
+	/* 红色 - Lululemon */
 	.brand-item-green {
-		background: #6DB3A8;
-		/* 原色 #20B2AA → 降低饱和度 */
+		background: #E42027;
 	}
 
 	.brand-item-green.active {
-		background: #4E8F87;
+		background: #C2181F;
 		/* 激活状态进一步加深 */
 		border: 4rpx solid #fff;
-		box-shadow: 0 6rpx 20rpx rgba(78, 143, 135, 0.5);
+		box-shadow: 0 6rpx 20rpx rgba(194, 24, 31, 0.5);
 		transform: scale(1.02);
 	}
 
-	/* 紫色 - ZARA (降低饱和度) */
+	/* 米白色 - ZARA */
 	.brand-item-purple {
-		background: #A794C7;
-		/* 原色 #9370DB → 降低饱和度 */
+		background: #F0E6D2;
 	}
 
 	.brand-item-purple.active {
-		background: #8A74B0;
+		background: #D9CBB0;
 		/* 激活状态进一步加深 */
 		border: 4rpx solid #fff;
-		box-shadow: 0 6rpx 20rpx rgba(138, 116, 176, 0.5);
+		box-shadow: 0 6rpx 20rpx rgba(217, 203, 176, 0.5);
 		transform: scale(1.02);
 	}
 
-	/* 橙色 - Louis Vuitton (降低饱和度) */
+	/* 棕色 - Louis Vuitton */
 	.brand-item-orange {
-		background: #E89F5C;
-		/* 原色 #FF8C00 → 降低饱和度 */
+		background: #8B4513;
 	}
 
 	.brand-item-orange.active {
-		background: #D17F3C;
+		background: #6D360F;
 		/* 激活状态进一步加深 */
 		border: 4rpx solid #fff;
-		box-shadow: 0 6rpx 20rpx rgba(209, 127, 60, 0.5);
+		box-shadow: 0 6rpx 20rpx rgba(109, 54, 15, 0.5);
 		transform: scale(1.02);
 	}
 
