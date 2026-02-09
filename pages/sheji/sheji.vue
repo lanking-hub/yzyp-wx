@@ -69,12 +69,15 @@
 			</view>
 
 			<!-- 生成按钮 -->
-			<button class="generate-btn" @click="generateDesign" :disabled="isGenerating">
-				<image v-if="!isGenerating" class="btn-icon-img" src="/static/icons/actions/wand-magic.svg"
-					mode="aspectFit"></image>
-				<text v-else class="btn-icon-emoji">⏳</text>
-				<text class="btn-text">{{ isGenerating ? '生成中...' : '生成服装设计' }}</text>
-			</button>
+			<view class="generate-btn-wrapper">
+				<view class="generate-btn-pulse"></view>
+				<button class="generate-btn" @click="generateDesign" :disabled="isGenerating">
+					<image v-if="!isGenerating" class="btn-icon-img" src="/static/icons/actions/wand-magic.svg"
+						mode="aspectFit"></image>
+					<text v-else class="btn-icon-emoji">⏳</text>
+					<text class="btn-text">{{ isGenerating ? '生成中...' : '生成服装设计' }}</text>
+				</button>
+			</view>
 
 			<!-- 冷启动提示 - 点击生成后显示 -->
 			<view v-if="showColdStartTip" class="cold-start-tip">
@@ -1059,11 +1062,55 @@
 
 	/* ============= 结束颜色方案选择 ============= */
 
+	/* 生成按钮容器 */
+	.generate-btn-wrapper {
+		position: relative;
+		width: 100%;
+		margin: 30rpx 0;
+	}
+
+	/* 边框流动发光效果 - 使用伪元素创建空心边框 */
+	.generate-btn-pulse {
+		position: absolute;
+		top: -4rpx;
+		left: -4rpx;
+		right: -4rpx;
+		bottom: -4rpx;
+		border-radius: 20rpx;
+		z-index: 1;
+		pointer-events: none;
+	}
+
+	.generate-btn-pulse::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 20rpx;
+		padding: 4rpx;
+		background: linear-gradient(90deg, #00FFFF, #FF00FF, #00FFFF);
+		background-size: 200% 100%;
+		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
+		animation: gradientFlow 3s linear infinite;
+	}
+
+	@keyframes gradientFlow {
+		0% {
+			background-position: 0% 50%;
+		}
+		100% {
+			background-position: 200% 50%;
+		}
+	}
+
 	/* 生成按钮 - 扁平风格 */
 	.generate-btn {
 		width: 100%;
-		margin: 30rpx 0;
-		background: #3B82F6;
+		background: #0A1628;
 		color: #fff;
 		border-radius: 16rpx;
 		padding: 24rpx;
@@ -1074,12 +1121,15 @@
 		justify-content: center;
 		gap: 12rpx;
 		font-weight: 600;
-		box-shadow: 0 2rpx 8rpx rgba(59, 130, 246, 0.25);
+		box-shadow: 0 2rpx 8rpx rgba(10, 22, 40, 0.25);
 		transition: all 0.2s ease;
+		position: relative;
+		z-index: 2;
+		overflow: visible;
 	}
 
 	.generate-btn:active {
-		background: #2563EB;
+		background: #060D18;
 		transform: scale(0.98);
 	}
 
